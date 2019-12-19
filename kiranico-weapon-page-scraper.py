@@ -3,31 +3,7 @@ import urllib.request
 import time
 from bs4 import BeautifulSoup
 import csv 
-
-def remove(value=str, deletechars=str) -> str:
-    """
-    Removes the given characters from the given string.
-
-    Parameters:
-    -----------
-    value: str
-        String to modify
-    deletechars: str
-        The characters to remove
-    """
-    for c in deletechars:
-        value = value.replace(c,'')
-    return value
-
-def download_image(url=str, output_dir=str, file_name=''):
-    filename = url.split('/')[-1]
-    if len(filename) == 0:
-        local_path = "{0}/{1}".format(output_dir, filename)
-    else:
-        local_path = "{0}/{1}".format(output_dir, remove(file_name,'\/:*?"<>|'))
-    results = requests.get(url)
-    with open(local_path, 'wb') as outfile:
-        outfile.write(results.content)
+from common import *
 
 def process_weapon_page(page_url=str):
     response = requests.get(page_url)
@@ -64,7 +40,7 @@ def process_weapon_page(page_url=str):
                             weapon_data['element_hidden'] = True                           
 
                         split_location = -1
-                        process_string = remove(element_string, '()\n').replace(' ', '').strip()
+                        process_string = remove_characters(element_string, '()\n').replace(' ', '').strip()
                         for i, c in enumerate(process_string):
                             if c.isdigit():
                                 split_location = i

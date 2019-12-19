@@ -1,7 +1,7 @@
-# kiranico-scraper
-A web-scraper script for getting MHW data from Kiranico.
+# mhw-data-scraper
+A collection of web-scraper scripts for getting MHW data from various wikis/websites.
 
-This is a *very* work in progress project. The main goal of this project is to be able to pull data from kiranico that is not yet available elsewhere for the Iceborne expansion of MHW. 
+This is a *very* work in progress project. The main goal of this project is to be able to pull data from Kiranico and other sources that is not yet available elsewhere for the Iceborne expansion of MHW. 
 
 ## Requirements
 
