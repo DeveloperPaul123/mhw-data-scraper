@@ -76,5 +76,7 @@ for table in tables:
         print('{} {} {}'.format(current_monster.name, current_monster.species, current_monster.image_link))
         if download_images and current_monster.image_link is not None:
             # download the thumbnail images for the monsters (from common.py)
-            download_image(current_monster.image_link, 'images/monsters', '{}_thumbnail.png'.format(current_monster.name))
+            download_image(current_monster.image_link, 
+                'images/monsters', 
+                '{}.png'.format(str(current_monster.name).lower().replace(' ', '-')))
             
