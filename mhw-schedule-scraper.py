@@ -45,6 +45,7 @@ api_json = api_response.json()
 
 # change this to false to avoid downloading the images
 download_images = True
+longest_title = ''
 for url, rank in zip(urls, ranks):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
@@ -56,6 +57,8 @@ for url, rank in zip(urls, ranks):
             event_row = process_event_row(row, rank)
             if(event_row is not None):
                 total_events +=1
+                if len(event_row.title) > len(longest_title): 
+                    longest_title = event_row.title
                 print('{} {} {}'.format(event_row.title, event_row.rank, event_row.image_link))
                 # find the id
                 event_id = -1
@@ -63,7 +66,8 @@ for url, rank in zip(urls, ranks):
                     if item['name'] == event_row.title:
                         event_id = item['id']
                         if download_images:
-                            download_image(event_row.image_link, 
+                            download_fil(event_row.image_link, 
                                 'images/events', '{}.png'.format(event_id))
 
 print('Total events found: {}'.format(total_events)) 
+print('Longest Title: {}'.format(longest_title))

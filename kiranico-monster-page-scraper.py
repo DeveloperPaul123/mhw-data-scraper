@@ -68,7 +68,7 @@ tables = soup.find_all(class_='table table-padded')
 monster_list = list()
 
 # change to True to download thumbnail images (where available) for the monsters.
-download_images = False
+download_images = True
 for table in tables:
     rows = table.find_all('tr')
     for row in rows:
@@ -76,7 +76,7 @@ for table in tables:
         print('{} {} {}'.format(current_monster.name, current_monster.species, current_monster.image_link))
         if download_images and current_monster.image_link is not None:
             # download the thumbnail images for the monsters (from common.py)
-            download_image(current_monster.image_link, 
-                'images/monsters', 
+            download_file(current_monster.image_link, 
+                'images/monsters/textured', 
                 '{}.png'.format(str(current_monster.name).lower().replace(' ', '-')))
             

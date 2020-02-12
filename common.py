@@ -20,7 +20,7 @@ def remove_characters(value=str, deletechars=str) -> str:
     return value
 
 
-def download_image(url=str, output_dir=str, file_name=''):
+def download_file(url=str, output_dir=str, file_name=''):
     """
     Downloads an image given it's url. 
 
@@ -37,12 +37,16 @@ def download_image(url=str, output_dir=str, file_name=''):
     # first check if output directory exists
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-    
-    filename = url.split('/')[-1]
+        
+    if len(file_name) > 0:
+        filename = file_name
+    else:
+        filename = url.split('/')[-1]
+
     if len(filename) == 0:
         local_path = "{0}/{1}".format(output_dir, filename)
     else:
-        local_path = "{0}/{1}".format(output_dir, remove_characters(file_name,'\/:*?"<>|'))
+        local_path = "{0}/{1}".format(output_dir, remove_characters(filename,'\/:*?"<>|'))
     results = requests.get(url)
     with open(local_path, 'wb') as outfile:
         outfile.write(results.content)

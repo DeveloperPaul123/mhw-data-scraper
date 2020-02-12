@@ -43,7 +43,7 @@ for table in tables:
         if results!= None:
             print(results)
             file_name = '{}.png'.format(results['name'].lower().replace(' ', '-'))
-            download_image(str(results['icon_link']), 'images/materials', file_name)
+            download_file(str(results['icon_link']), 'images/materials', file_name)
             material_items_data.append(results)
 
 print('Found {} total items.'.format(len(material_items_data)))
