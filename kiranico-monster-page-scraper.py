@@ -6,9 +6,17 @@ import csv
 from common import *
 from collections import namedtuple
 from pprint import pprint
+from selenium import *
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver import Chrome
+from selenium.webdriver.common.keys import Keys
 
 # named tuple for monsters
 monster = namedtuple('monster', 'name type image_link species description element ailments locations resistances weakness rewards')
+monster_reward = namedtuple('monster_reward', 'name droprate rank condition')
 
 def pretty_print_monster(mon=monster):
     pprint(dict(vars(mon)))
@@ -36,8 +44,15 @@ def process_monster_row(row, monster_type=str) -> monster:
     return return_monster
 
 def process_monster_page(page_url=str, mon=monster):
-    response = requests.get(page_url)
-    soup = BeautifulSoup(response.text, "html.parser")
+    browser = Chrome(ChromeDriverManager().install())
+    browser.get(url)
+    for i in range(1, 3):
+        bg = browser.find_element_by_css_selector('body')
+        time.sleep(0.5)
+        bg.send_keys(Keys.PAGE_DOWN)
+
+    # response = requests.get(page_url)
+    soup = BeautifulSoup(browser.page_source, "html.parser")
 
     project_info = soup.find(class_='project-info')
     description = project_info.find(class_='col-sm-6').text
@@ -52,6 +67,45 @@ def process_monster_page(page_url=str, mon=monster):
     # set the species
     mon.species = remove_characters(balance_table_rows[0].text, '\n').strip()
 
+    # find all element wrappers
+    element_wrappers = soup.find_all(class_='element-wrapper')
+    for wrapper in element_wrappers:
+        header = wrapper.find(class_='element-header')
+        contents = wrapper.find(class_='row')
+        if header != None:
+            header_text = remove_characters(header.text, '\n').strip().lower()
+            if header_text == 'carves' or header_text == 'rewards' or header_text == 'investigations':
+                print(header_text)
+                # initialize the list
+                if mon.rewards == None:
+                    mon.rewards = list()
+                
+                # get the rank columns
+                rank_columns = contents.find_all(class_='col-lg-4')
+                for rank_column in rank_columns:
+                    rank = remove_characters(rank_column.text, '\n').strip()
+                    # if rank == 'Low Rank' or rank == 'High Rank' or rank == 'Master Rank':                                
+                    if rank == 'Master Rank':
+                        print(rank_column)
+                        # table = rank_column.find('table')
+                        # rows = table.find_all('tr')
+                        # for row in rows:
+                        #     columns = row.find_all('td')
+                        #     if len(columns) == 1:
+                        #         # title column
+                        #         print(columns[0].text)
+                            
+    return
+
+def process_ranked_column_rewards(rank_column, rank) -> list():
+    tables = rank_column.find_all(class_='table-responsive')
+    for table in tables:
+        rows = table.find_all('tr')
+        for row in rows:
+            columns = row.find_all('td')
+            if len(columns) == 1:
+                # title column
+                print(columns[0].text)
     return
 
 
@@ -68,7 +122,7 @@ tables = soup.find_all(class_='table table-padded')
 monster_list = list()
 
 # change to True to download thumbnail images (where available) for the monsters.
-download_images = True
+download_images = False
 for table in tables:
     rows = table.find_all('tr')
     for row in rows:
