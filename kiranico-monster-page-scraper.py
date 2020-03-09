@@ -6,13 +6,7 @@ import csv
 from common import *
 from collections import namedtuple
 from pprint import pprint
-from selenium import *
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver import Chrome
-from selenium.webdriver.common.keys import Keys
+from requests_html import HTMLSession
 
 # named tuple for monsters
 monster = namedtuple('monster', 'name type image_link species description element ailments locations resistances weakness rewards')
@@ -44,15 +38,11 @@ def process_monster_row(row, monster_type=str) -> monster:
     return return_monster
 
 def process_monster_page(page_url=str, mon=monster):
-    browser = Chrome(ChromeDriverManager().install())
-    browser.get(url)
-    for i in range(1, 3):
-        bg = browser.find_element_by_css_selector('body')
-        time.sleep(0.5)
-        bg.send_keys(Keys.PAGE_DOWN)
-
+    session = HTMLSession()
+    response = session.get(page_url)
+    response.html.render()
     # response = requests.get(page_url)
-    soup = BeautifulSoup(browser.page_source, "html.parser")
+    soup = BeautifulSoup(response.html.raw_html, "html.parser")
 
     project_info = soup.find(class_='project-info')
     description = project_info.find(class_='col-sm-6').text
@@ -86,14 +76,14 @@ def process_monster_page(page_url=str, mon=monster):
                     rank = remove_characters(rank_column.text, '\n').strip()
                     # if rank == 'Low Rank' or rank == 'High Rank' or rank == 'Master Rank':                                
                     if rank == 'Master Rank':
-                        print(rank_column)
-                        # table = rank_column.find('table')
-                        # rows = table.find_all('tr')
-                        # for row in rows:
-                        #     columns = row.find_all('td')
-                        #     if len(columns) == 1:
-                        #         # title column
-                        #         print(columns[0].text)
+                        table = contents.find('table')
+                        rows = table.find_all('tr')
+                        for row in rows:
+                            print(row.text)
+                            columns = row.find_all('td')
+                            if len(columns) == 1:
+                                # title column
+                                print(columns[0].text)
                             
     return
 
