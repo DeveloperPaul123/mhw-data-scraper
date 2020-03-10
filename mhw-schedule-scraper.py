@@ -66,7 +66,7 @@ for url, rank in zip(urls, ranks):
                     if item['name'] == event_row.title:
                         event_id = item['id']
                         if download_images:
-                            download_fil(event_row.image_link, 
+                            download_file(event_row.image_link, 
                                 'images/events', '{}.png'.format(event_id))
 
 print('Total events found: {}'.format(total_events)) 
