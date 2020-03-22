@@ -30,7 +30,7 @@ monster_reward_list = list()
 session = HTMLSession()
 
 for card in cards:
-    if any(x in card.div.text for x in ["Wyvern", "Dragon", "Beast"]):
+    if any(x in card.div.text for x in ["Relict, Wyvern", "Dragon", "Beast"]):
         # monster species
         monster_species = card.div.text
         print(card.div.text)
@@ -55,7 +55,7 @@ for card in cards:
                     print('Unable to load page, trying again')
                     time.sleep(1.0)
             
-            mon_page_response.html.render(retries = 10, timeout= 30.0, wait=1.0)
+            mon_page_response.html.render(retries = 20, timeout= 30.0, wait=2.0)
             monster_soup = BeautifulSoup(mon_page_response.html.raw_html, "html.parser")
 
             monster_page_cards = monster_soup.find_all(class_="card")
@@ -73,7 +73,9 @@ for card in cards:
                             continue
                         reward_condition = reward_columns[0].text
                         reward_item_raw = reward_columns[1].text
-                        reward_chance = reward_columns[2].text
+                        # some reward changes are of the form: 1% (Guaranteed)
+                        # so we remove it here
+                        reward_chance = reward_columns[2].text.replace("(Guaranteed)", "").strip()
                         matcher = re.compile("\d+")
                         if matcher.search(reward_item_raw):
                             item_parts = reward_item_raw.rpartition(" ")
@@ -100,7 +102,9 @@ if not os.path.exists('scraped_data'):
 
 # open CSV file and dump rewards
 with open('scraped_data/monster_rewards.csv', 'w', newline='\n') as csv_file:
-    reward_writer = csv.writer(csv_file, delimeter=',')
+    reward_writer = csv.writer(csv_file, delimiter=',')
+    print("Exporing rewards list to CSV file...")
+    print("Total rewards: {}".format(len(monster_reward_list)))
     for reward in monster_reward_list:
         reward_writer.writerow(
             [
@@ -108,7 +112,7 @@ with open('scraped_data/monster_rewards.csv', 'w', newline='\n') as csv_file:
                 reward.condition,
                 reward.rank,
                 reward.item_name,
-                reward.count,
+                reward.stack,
                 int(remove_characters(reward.droprate, '%').strip())
             ]
         )

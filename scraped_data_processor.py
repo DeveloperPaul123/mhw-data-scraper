@@ -7,6 +7,6 @@ def get_unique_monster_reward_conditions(csv_file_path):
     return unique_conditions
 
 
-unique_conditions = get_unique_monster_reward_conditions('data/monsters/monster_rewards.csv')
+unique_conditions = get_unique_monster_reward_conditions('scraped_data/monster_rewards.csv')
 for condition in unique_conditions:
     print(condition)
