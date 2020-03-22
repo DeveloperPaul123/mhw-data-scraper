@@ -9,10 +9,13 @@ To run the script you will need:
 
 * Python 3 (tested with `3.8+`)
 * Python packages (install with pip if missing)
-  * `requests`
-  * `bs4`
+  * `requests`: HTML requests
+  * `requests-html`: Headless browser html requests with the ability to load dynamic content
+    * Note that you may need to force install `websockets` version `6.0` due to a pyppeteer [issue](https://github.com/miyakogi/pyppeteer/issues/171#issuecomment-478338932)
+  * `re`: Regular expressions
+  * `bs4`: BeautifulSoup html parser/scraper
   * `urllib`
-  * `csv`
+  * `csv`: CSV file output/input
 
 ## Usage
 
